@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>简单的模拟图片懒加载过程</title>
+    <style>
+      img {
+        display: block;
+        height: 400px;
+        border: 1px solid red;
+        min-width: 500px;
+        margin-bottom: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script>
+      let appDom = document.getElementById("app"); //获取app dom元素
+      //图片地址
+      let arrImg = [
+        "https://yapi.clowned.cn/images/upload/896a8293bd476d1af897bc212d692176.jpg",
+        "https://yapi.clowned.cn/images/upload/6c89a3de2a8583348b02d746b9ee4b78.jpg",
+        "https://yapi.clowned.cn/images/upload/c16fa5011d0de3cdb80061363a138d57.jpg",
+        "https://yapi.clowned.cn/images/upload/f4343972c271dbe881cbd9944cd6d16f.jpg",
+        "https://yapi.clowned.cn/images/upload/73cd6473807ace96475b6743b5810a1c.jpg",
+        "https://yapi.clowned.cn/images/upload/60cc4c9f7c1fcc8cf7c87bc4cbdad4ef.jpg",
+        "https://yapi.clowned.cn/images/upload/86695cbe935e5e06a5e304d0e26150d6.jpg",
+        "https://yapi.clowned.cn/images/upload/7209824867a17034999f888746aee755.jpg",
+        "https://yapi.clowned.cn/images/upload/452f0b650fa1863d2b02cafcdac2ccd5.jpg",
+      ];
+      let innerHtmlStr = "";
+      arrImg.forEach((e) => {
+        innerHtmlStr += `<img src="" data-src='${e}'>`;
+      });
+      appDom.innerHTML = innerHtmlStr; //生成img dom元素 插入app下
+      //获取所有img的dom元素
+      let imgDomArr = document.getElementsByTagName("img");
+      let num = imgDomArr.length; //有多少张图片
+      let count = 0; //执行了多少张图片
+      let isLodaing = false; //所有图片是否已加载完成
+      let _clientHeight = document.documentElement.clientHeight; //可见区域高度
+      let _scrollTop =
+        document.documentElement.scrollTop || document.body.scrollTop; //滚动条的高度
+
+      //窗口发生变化 重新计算窗口可见区域高度
+      function calculateClientHeight() {
+        _clientHeight = document.documentElement.clientHeight; //重新计算可视区域高度
+      }
+      //页面一开始加载就先执行一次函数
+      lazyLodaing();
+      function lazyLodaing() {
+        //获取滚动条高度
+        _scrollTop =
+          document.documentElement.scrollTop || document.body.scrollTop;
+        isLodaing = count >= num; //是否已加载完所有图片
+        for (let i = count; i < num; i++) {
+          // 判断改图片是否在可视区域内
+          if (imgDomArr[i].offsetTop < _clientHeight + _scrollTop) {
+            // 判断该图片的src值是否为空
+            if (imgDomArr[i].getAttribute("src") == "") {
+              // 图片已到可视区域内 给图片的src赋值 开始加载图片
+              imgDomArr[i].src = imgDomArr[i].getAttribute("data-src");
+            }
+            count = i + 1;
+          }
+        }
+      }
+
+      //采用节流函数 防止高频率执行函数
+      window.onscroll = throttle(lazyLodaing);
+
+      /*
+      简单的节流函数
+      fn->回调函数
+      wait 等待的时间  默认300ms
+      flag 是否不需要执行fn 默认false 需要执行fn函数
+      */
+      function throttle(fn, wait = 300, flag = false) {
+        let timerOut;
+        return function() {
+          if (flag) {
+            return;
+          }
+          if (!timerOut) {
+            timerOut = setTimeout(function() {
+              fn();
+              timerOut = null;
+            }, wait);
+          }
+        };
+      }
+    </script>
+  </body>
+</html>
