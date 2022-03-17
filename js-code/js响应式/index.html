@@ -1,0 +1,33 @@
+<!--
+ * @Author: leandrowhy
+ * @Date: 2022-01-24 13:43:11
+ * @Description: file content
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>一个简单的js数据响应式</title>
+</head>
+
+<body>
+  <div>
+    视图1:
+    <div class="box1"></div>
+    视图2:
+    <div class="box2"></div>
+  </div>
+  <script src="./index.js"></script>
+  <script>
+    let obj = {}
+    dataRES({ data: obj, tag: 'box1', dataKey: 'a', select: '.box1' })
+    dataRES({ data: obj, tag: 'box2', dataKey: 'b', select: '.box2' })
+    obj.a = '沙北王强'
+    obj.b = '王强是沙北'
+  </script>
+</body>
+
+</html>
